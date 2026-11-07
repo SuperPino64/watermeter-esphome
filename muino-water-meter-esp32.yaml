@@ -383,6 +383,7 @@ sensor:
     name: "Phase"
     id: phase_sensor
     force_update: true
+    internal: false
     accuracy_decimals: 0
     lambda: |-
       return id(phase);
