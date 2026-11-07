@@ -126,7 +126,12 @@ interval:
                   id(flow_rate_last_sensor).publish_state(id(flow_rate_last));
 
                 }
-
+  - interval: 1s
+    then:
+      - component.update: as
+      - component.update: bs
+      - component.update: cs
+      - component.update: phase_sensor 
   # - interval: 10s # Check every 10 seconds to reduce load, adjust as needed
   #   then:
   #     - lambda: |-
@@ -343,7 +348,7 @@ sensor:
 # sensor values
   - platform: template
     name: "sensa"
-    force_update: false
+    force_update: true
     internal: true
     id: al
     device_class: "ILLUMINANCE"
@@ -354,7 +359,7 @@ sensor:
 
   - platform: template
     name: "sensb"
-    force_update: false
+    force_update: true
     internal: true
     id: bl
     device_class: "ILLUMINANCE"
@@ -365,7 +370,7 @@ sensor:
 
   - platform: template
     name: "sensc"
-    force_update: false
+    force_update: true
     internal: true
     id: cl
     device_class: "ILLUMINANCE"
@@ -373,7 +378,14 @@ sensor:
     accuracy_decimals: 0 
     lambda: |-
       return id(light_sensor_c_light).state;
-
+      
+  - platform: template
+    name: "Phase"
+    id: phase_sensor
+    force_update: true
+    accuracy_decimals: 0
+    lambda: |-
+      return id(phase);
 
 # substracted values
   - platform: template
