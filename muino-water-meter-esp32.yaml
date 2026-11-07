@@ -378,7 +378,7 @@ sensor:
     name: "sensa_sub"
     id: as
     force_update: false
-    internal: false
+    internal: true
     device_class: "ILLUMINANCE"
     unit_of_measurement: "lx"
     accuracy_decimals: 0 
@@ -389,7 +389,7 @@ sensor:
   - platform: template
     name: "sensb_sub"
     force_update: false
-    internal: false
+    internal: true
     id: bs
     device_class: "ILLUMINANCE"
     unit_of_measurement: "lx"
@@ -400,7 +400,7 @@ sensor:
   - platform: template
     name: "sensc_sub"
     force_update: false
-    internal: false
+    internal: true
     id: cs
     device_class: "ILLUMINANCE"
     unit_of_measurement: "lx"
@@ -411,7 +411,7 @@ sensor:
   - platform: template
     name: "Phase"
     id: phase_sensor
-    internal: false
+    internal: true
     force_update: false
     accuracy_decimals: 0
     lambda: |-
