@@ -87,8 +87,6 @@ switch:
     icon: "mdi:bug"
     turn_on_action:
       - switch.turn_on: fastupdate
-    turn_off_action:
-      - switch.turn_off: fastupdate
 
   # for manual calibration or auto
   - platform: template
