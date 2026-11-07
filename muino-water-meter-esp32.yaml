@@ -553,18 +553,18 @@ sensor:
                 (id(min_a) + id(max_a)) >> 1,
                 (id(min_b) + id(max_b)) >> 1,
                 (id(min_c) + id(max_c)) >> 1);
-      
 
       // Ensure phase always stays within valid range
-      if (id(phase) < 0)
-          id(phase) = 0;
+      int phase = id(phase);
+      if (phase < 0)
+          phase = 0;
 
-      if (id(phase) > 5)
-          id(phase) = 5;
-
+      if (phase > 5)
+          phase = 5;
+      id(phase) = phase;
       short pn[5];
 
-      if (id(phase) & 1)
+      if (phase & 1)
           pn[0] = a + a - b - c,
           pn[1] = b + b - a - c,
           pn[2] = c + c - a - b;
@@ -575,8 +575,8 @@ sensor:
 
       pn[3] = pn[0];
       pn[4] = pn[1];
-
-      short i = (id(phase) > 2) ? id(phase) - 3 : id(phase);
+      
+      short i = (phase > 2) ? phase - 3 : phase;
       
       if (pn[i + 2] < pn[i + 1] && pn[i + 2] < pn[i]){
           uint32_t current_time = millis();
@@ -588,8 +588,7 @@ sensor:
             if (time_diff > 0) {
               // Flow rate based on phase changes (6 phases = 1 liter)
               // Each phase = 1/6 liter, time_diff in ms
-              float liters_per_phase = 1.0 / 6.0;
-              float flow_rate = (liters_per_phase * 60000.0) / float(time_diff); // L/min
+              float flow_rate = 10000.0f / float(time_diff); // L/min
               if (flow_rate > 50.0f)
                   flow_rate = 50.0f;
               
