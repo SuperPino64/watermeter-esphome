@@ -7,7 +7,7 @@ esphome:
     version: dev # This will be replaced by the github workflows with the `release` version
 
 dashboard_import:
-  package_import_url: github://martijnvwezel/watermeter-esphome/muino-water-meter-esp32.yaml@main
+  package_import_url: github://superpino64/watermeter-esphome/muino-water-meter-esp32.yaml@main
 
 # Sets up Bluetooth LE (Only on ESP32) to allow the user
 # to provision wifi credentials to the device.
