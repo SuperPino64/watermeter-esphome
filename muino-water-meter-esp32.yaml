@@ -410,22 +410,6 @@ sensor:
     lambda: |-
       return id(cc);
 
-# liters
-  - platform: template
-    name: "⚠️ Water Total (mL) [DEPRECATED]"
-    icon: mdi:alert-circle-outline
-    id: report_liters
-    force_update: false
-    device_class: "water"
-    unit_of_measurement: "mL"
-    accuracy_decimals: 3
-    state_class: total_increasing
-    lambda: |-
-      if (id(liters) < 2){
-        return 0;
-      }    
-      return id(last_reported_liters__mili);
-
   - platform: template
     name: "Muino Water Total (L)"
     id: report_liters_ml
