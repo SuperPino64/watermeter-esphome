@@ -129,9 +129,9 @@ button:
           id(min_a)= a;
           id(min_b)= b;
           id(min_c)= c;
-          id(max_a)= 0;
-          id(max_b)= 0;
-          id(max_c)= 0;
+          id(max_a)= a;
+          id(max_b)= b;
+          id(max_c)= c;
 
 output:
   - platform: gpio
@@ -509,9 +509,9 @@ sensor:
               id(min_a)= a;
               id(min_b)= b;
               id(min_c)= c;
-              id(max_a)= 0;
-              id(max_b)= 0;
-              id(max_c)= 0;
+              id(max_a)= a;
+              id(max_b)= b;
+              id(max_c)= c;
           }
       }
 
@@ -562,23 +562,29 @@ sensor:
                 (id(min_c) + id(max_c)) >> 1);
       
 
-      short    pn[5];
-      if (id(phase) & 1)
-          pn[0] = a + a - b - c, pn[1] = b + b - a - c,
-          pn[2] = c + c - a - b; // same
-      else
-          pn[0]     = b + c - a - a, // less
-              pn[1] = a + c - b - b, // more
-              pn[2] = a + b - c - c; // same
-      pn[3] = pn[0], pn[4] = pn[1];
-      
+      // Ensure phase always stays within valid range
       if (id(phase) < 0)
           id(phase) = 0;
 
       if (id(phase) > 5)
           id(phase) = 5;
 
-      short i = id(phase) > 2 ? id(phase) - 3 : id(phase);
+      short pn[5];
+
+      if (id(phase) & 1)
+          pn[0] = a + a - b - c,
+          pn[1] = b + b - a - c,
+          pn[2] = c + c - a - b;
+      else
+          pn[0] = b + c - a - a,
+          pn[1] = a + c - b - b,
+          pn[2] = a + b - c - c;
+
+      pn[3] = pn[0];
+      pn[4] = pn[1];
+
+      short i = (id(phase) > 2) ? id(phase) - 3 : id(phase);
+      
       if (pn[i + 2] < pn[i + 1] && pn[i + 2] < pn[i]){
           uint32_t current_time = millis();
           id(last_water_flow) = current_time;
