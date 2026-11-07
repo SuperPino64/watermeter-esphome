@@ -52,24 +52,17 @@ interval:
           else:
             - lambda: |-
 
-                const uint32_t idle_ms =
-                    (uint32_t) id(update_interval_idle) * 1000UL;
-
                 // Alleen tijdens stilstand periodiek publiceren
-                if ((millis() - id(last_water_flow)) >= idle_ms) {
+                id(last_reported_liters__mili) =
+                    id(liters) * 1000 +
+                    ((id(phase) * 1000) / 6);
 
-                  id(last_reported_liters__mili) =
-                      id(liters) * 1000 +
-                      ((id(phase) * 1000) / 6);
+                id(last_reported_liters) = id(liters);
 
-                  id(last_reported_liters) = id(liters);
-
-                  // Force sensor refresh
-                  id(current_consumption_sensor)->publish_state(id(current_consumption));
-                  id(previous_consumption_sensor)->publish_state(id(previous_consumption));
-                  id(flow_rate_current_sensor)->publish_state(id(flow_rate_current));
-                  id(flow_rate_last_sensor)->publish_state(id(flow_rate_last));
-                }
+                id(current_consumption_sensor)->publish_state(id(current_consumption));
+                id(previous_consumption_sensor)->publish_state(id(previous_consumption));
+                id(flow_rate_current_sensor)->publish_state(id(flow_rate_current));
+                id(flow_rate_last_sensor)->publish_state(id(flow_rate_last));
 
 # Toggle switch
 switch:
@@ -763,11 +756,6 @@ globals:
     type: int
     initial_value: "0"
 
-  - id: update_interval_idle
-    type: int
-    restore_value: yes
-    initial_value: "60"
-
 number:
   - platform: template
     id: offset_a_number
@@ -804,20 +792,6 @@ number:
       then:
         - lambda: |-
             id(manual_offset_c) = (int) x;
-
-  - platform: template
-    id: update_interval_idle_number
-    name: "Update Interval (s)"
-    min_value: 1
-    max_value: 3600
-    step: 1
-    lambda: return id(update_interval_idle);
-    set_action:
-      then:
-        - lambda: |-
-            id(update_interval_idle) = (int) x;
-
-
 
 # Make sure logging is correct for solving platform IO bugs
 logger:
