@@ -126,12 +126,6 @@ interval:
                   id(flow_rate_last_sensor).publish_state(id(flow_rate_last));
 
                 }
-  - interval: 1s
-    then:
-      - component.update: as
-      - component.update: bs
-      - component.update: cs
-      - component.update: phase_sensor 
   # - interval: 10s # Check every 10 seconds to reduce load, adjust as needed
   #   then:
   #     - lambda: |-
@@ -383,7 +377,7 @@ sensor:
   - platform: template
     name: "sensa_sub"
     id: as
-    force_update: true
+    force_update: false
     internal: false
     device_class: "ILLUMINANCE"
     unit_of_measurement: "lx"
@@ -394,7 +388,7 @@ sensor:
 
   - platform: template
     name: "sensb_sub"
-    force_update: true
+    force_update: false
     internal: false
     id: bs
     device_class: "ILLUMINANCE"
@@ -405,7 +399,7 @@ sensor:
 
   - platform: template
     name: "sensc_sub"
-    force_update: true
+    force_update: false
     internal: false
     id: cs
     device_class: "ILLUMINANCE"
@@ -418,7 +412,7 @@ sensor:
     name: "Phase"
     id: phase_sensor
     internal: false
-    force_update: true
+    force_update: false
     accuracy_decimals: 0
     lambda: |-
       return id(phase);
@@ -499,26 +493,22 @@ sensor:
     state_class: "total"
     internal: true
     on_value:
-      if:
-        condition:
-      # Same syntax for is_off
-          switch.is_on: fastupdate
-        then:
-          - component.update: report_liters_ml
-          - component.update: report_liters_rounded
-          - component.update: al
-          - component.update: bl
-          - component.update: cl
-          - component.update: ad
-          - component.update: bd
-          - component.update: cd
-          - component.update: as
-          - component.update: bs
-          - component.update: cs
-          - component.update: flow_rate_current_sensor
-          - component.update: flow_rate_last_sensor
-          - component.update: current_consumption_sensor
-          - component.update: previous_consumption_sensor
+      then:
+        - component.update: report_liters_ml
+        - component.update: report_liters_rounded
+        - component.update: flow_rate_current_sensor
+        - component.update: flow_rate_last_sensor
+        - component.update: current_consumption_sensor
+        - component.update: previous_consumption_sensor
+
+        - if:
+            condition:
+              switch.is_on: debugmodus
+            then:
+              - component.update: as
+              - component.update: bs
+              - component.update: cs
+              - component.update: phase_sensor          
     lambda: |-
       static bool first = true;
 
