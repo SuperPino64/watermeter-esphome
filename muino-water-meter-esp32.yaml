@@ -379,6 +379,7 @@ sensor:
     id: as
     force_update: false
     internal: true
+    force_update: false
     device_class: "ILLUMINANCE"
     unit_of_measurement: "lx"
     accuracy_decimals: 0 
@@ -390,6 +391,7 @@ sensor:
     name: "sensb_sub"
     force_update: false
     internal: true
+    force_update: false
     id: bs
     device_class: "ILLUMINANCE"
     unit_of_measurement: "lx"
@@ -401,6 +403,7 @@ sensor:
     name: "sensc_sub"
     force_update: false
     internal: true
+    force_update: false
     id: cs
     device_class: "ILLUMINANCE"
     unit_of_measurement: "lx"
