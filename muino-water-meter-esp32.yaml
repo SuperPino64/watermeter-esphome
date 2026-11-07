@@ -78,7 +78,7 @@ switch:
     id: fastupdate
     name: Speed mode
     icon: "mdi:emoticon-cool-outline"
-    restore_mode: RESTORE_DEFAULT_ON
+    restore_mode: ALWAYS_ON
 
   - platform: template
     optimistic: true
