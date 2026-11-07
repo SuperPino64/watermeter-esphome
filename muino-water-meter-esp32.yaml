@@ -379,15 +379,6 @@ sensor:
     lambda: |-
       return id(light_sensor_c_light).state;
       
-  - platform: template
-    name: "Phase"
-    id: phase_sensor
-    force_update: true
-    internal: false
-    accuracy_decimals: 0
-    lambda: |-
-      return id(phase);
-
 # substracted values
   - platform: template
     name: "sensa_sub"
