@@ -391,7 +391,7 @@ sensor:
   - platform: template
     name: "sensa_sub"
     id: as
-    force_update: false
+    force_update: true
     internal: false
     device_class: "ILLUMINANCE"
     unit_of_measurement: "lx"
@@ -402,7 +402,7 @@ sensor:
 
   - platform: template
     name: "sensb_sub"
-    force_update: false
+    force_update: true
     internal: false
     id: bs
     device_class: "ILLUMINANCE"
@@ -413,7 +413,7 @@ sensor:
 
   - platform: template
     name: "sensc_sub"
-    force_update: false
+    force_update: true
     internal: false
     id: cs
     device_class: "ILLUMINANCE"
