@@ -85,9 +85,7 @@ switch:
     id: debugmodus
     name: Debug mode
     icon: "mdi:bug"
-    turn_on_action:
-      - switch.turn_on: fastupdate
-
+    
   # for manual calibration or auto
   - platform: template
     id: calibration_mode
