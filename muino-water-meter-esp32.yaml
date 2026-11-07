@@ -126,28 +126,6 @@ interval:
                   id(flow_rate_last_sensor).publish_state(id(flow_rate_last));
 
                 }
-  # - interval: 10s # Check every 10 seconds to reduce load, adjust as needed
-  #   then:
-  #     - lambda: |-
-  # - interval: 1s
-  #   then:
-  #     # - component.update: report_liters
-  #     # - component.update: report_liters_rounded
-  #     - logger.log:
-  #         level: INFO
-  #         tag: time
-  #         format: "o:%d"
-  #         args: [ 'id(last_water_flow)']
-  # #     - logger.log:
-  #         level: INFO
-  #         tag: max_average
-  #         format: "a:%d b:%d c:%d"
-  #         args: [ 'id(max_a)', 'id(max_b)' , 'id(max_c)']
-  #     - logger.log:
-  #         level: INFO
-  #         tag: min_average
-  #         format: "a:%d b:%d c:%d"
-  #         args: [ 'id(min_a)', 'id(min_b)' , 'id(min_c)']
 
 # Toggle switch
 switch:
@@ -156,6 +134,7 @@ switch:
     id: fastupdate
     name: Speed mode
     icon: "mdi:emoticon-cool-outline"
+    restore_mode: RESTORE_DEFAULT_ON
 
   - platform: template
     optimistic: true
