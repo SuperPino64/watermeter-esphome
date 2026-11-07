@@ -422,7 +422,16 @@ sensor:
     accuracy_decimals: 0 
     lambda: |-
       return id(cc);
-
+      
+  - platform: template
+    name: "Phase"
+    id: phase_sensor
+    internal: false
+    force_update: true
+    accuracy_decimals: 0
+    lambda: |-
+      return id(phase);
+    
   - platform: template
     name: "Muino Water Total (L)"
     id: report_liters_ml
