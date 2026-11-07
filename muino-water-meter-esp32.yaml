@@ -1,4 +1,4 @@
-# WILLIAM_TEST_081126
+# WILLIAM_TEST_v1.2
 
 # These substitutions allow the end user to override certain values
 substitutions:
@@ -12,119 +12,70 @@ esphome:
   platformio_options:
     board_build.flash_mode: "dio"
 
-  # This will allow for (future) project identification,
-  # configuration and updates.
-  # project:
-  #   name: esphome-muino-water-meter
-  #   version: "3.0.4"
-
 esp32:
   board: seeed_xiao_esp32c3
   framework:
     type: esp-idf
 
-# Triggers reading adc values and iterating algoritm
+# Triggers reading adc values and iterating algorithm
 interval:
   - interval: 100ms
     then:
       - output.turn_on: sensor_power
       - component.update: light_sensor_a_dark
+
       - if:
           condition:
             lambda: |-
-              return id(fastupdate).state; // If fastupdate is on, update immediately
+              return id(fastupdate).state;
+
           then:
             - lambda: |-
-                if (id(spindel_normal).state) {
-                  // Normal meter: symmetric 180° pattern
-                  id(last_reported_liters__mili) = (int)(1000*(id(liters)+id(phase)/6.0));
-                } else {
-                  // 120° meter: asymmetric pattern - 120° white (2 phases), 240° dark (4 phases)
-                  float phase_fraction;
-                  if (id(phase) < 2) {
-                    // In white section (120°): phases 0-1 = 0.0 to 0.333 liters
-                    phase_fraction = id(phase) / 6.0;
-                  } else {
-                    // In dark section (240°): phases 2-5 = 0.333 to 1.0 liters
-                    // phase_fraction = 0.333 + ((id(phase) - 2) * 0.667 / 4.0);
-                    // phases 2..5 -> 0.3333 .. 1.0
-                    // (phase-2) is 0..3, divide by 3 so phase=5 reaches 1.0
-                    //phase_fraction = 0.333333f + ((id(phase) - 2.0f) / 3.0f) * 0.666667f;
-                    phase_fraction = 0.3333 + ((id(phase) - 2)/3 * 0.66667);
-                  }
-                  id(last_reported_liters__mili) = (int)(1000*(id(liters) + phase_fraction));
-                }
+                // 180° meter only
+                // 1 phase = 1/6 liter = 166.667 ml
+                id(last_reported_liters__mili) =
+                    id(liters) * 1000 +
+                    ((id(phase) * 1000) / 6);
+
                 id(last_reported_liters) = id(liters);
-                id(last_water_flow) = millis();
+
+                // last_water_flow wordt elders bijgewerkt
+                // bij een echte faseverandering
+
             - if:
                 condition:
                   lambda: |-
                     return id(debugmodus).state;
                 then:
-                  - lambda: |-
-                      char json[256];
-                      int flow_cur = (int)(id(flow_rate_current) * 1);
-                      int flow_last = (int)(id(flow_rate_last) * 1);
-                      int cons_cur = (int)(id(current_consumption) * 1);
-                      int cons_last = (int)(id(previous_consumption) * 1);
-                      snprintf(
-                        json, sizeof(json),
-                        "{"
-                          "\"liters\":%d,\"phase\":%d,"
-                          "\"last_L\":%d,\"last_mL\":%d,"
-                          "\"aa\":%d,\"bb\":%d,\"cc\":%d,"
-                          "\"max_a\":%d,\"max_b\":%d,\"max_c\":%d,"
-                          "\"min_a\":%d,\"min_b\":%d,\"min_c\":%d,"
-                          "\"flow_cur\":%d,\"flow_last\":%d,"
-                          "\"cons_cur\":%d,\"cons_last\":%d"
-                        "}"
-                        ,id(liters), id(phase)
-                        ,id(last_reported_liters)
-                        ,id(last_reported_liters__mili)
-
-                        ,id(aa), id(bb), id(cc)
-                        ,id(max_a), id(max_b), id(max_c)
-                        ,id(min_a), id(min_b), id(min_c)
-
-                        ,flow_cur, flow_last
-                        ,cons_cur, cons_last
-                      );
-
-                      ESP_LOGD("debug_json", "Publishing debug json: %s", json);
-                      id(debug_json).publish_state(json);
+                  # debug acties hier
 
           else:
             - lambda: |-
-                // If fastupdate is off, only update every 60 seconds (configurable)
-                if ((millis() - id(last_water_flow)) >= id(update_interval_idle) * 1000) {
-                  if (id(spindel_normal).state) {
-                    // Normal meter: symmetric 180° pattern
-                    id(last_reported_liters__mili) = (int)(1000*(id(liters)+id(phase)/6.0));
-                  } else {
-                    // 120° meter: asymmetric pattern - 120° white (2 phases), 240° dark (4 phases)
-                    float phase_fraction;
-                    if (id(phase) < 2) {
-                      // In white section (120°): phases 0-1 = 0.0 to 0.333 liters
-                      phase_fraction = id(phase) / 6.0;
-                    } else {
-                    // In dark section (240°): phases 2-5 = 0.333 to 1.0 liters
-                    // phase_fraction = 0.333 + ((id(phase) - 2) * 0.667 / 4.0);
-                    // phases 2..5 -> 0.3333 .. 1.0
-                    // (phase-2) is 0..3, divide by 3 so phase=5 reaches 1.0
-                    //phase_fraction = 0.333333f + ((id(phase) - 2.0f) / 3.0f) * 0.666667f;
-                    phase_fraction = 0.3333 + ((id(phase) - 2)/3 * 0.66667);
-                    }
-                    id(last_reported_liters__mili) = (int)(1000*(id(liters) + phase_fraction));
-                  }
+
+                const uint32_t idle_ms =
+                    (uint32_t) id(update_interval_idle) * 1000UL;
+
+                // Alleen tijdens stilstand periodiek publiceren
+                if ((millis() - id(last_water_flow)) >= idle_ms) {
+
+                  id(last_reported_liters__mili) =
+                      id(liters) * 1000 +
+                      ((id(phase) * 1000) / 6);
+
                   id(last_reported_liters) = id(liters);
-                  id(last_water_flow) = millis();
 
-                  // Force update sensors so it gets new values
-                  id(current_consumption_sensor).publish_state(id(current_consumption));
-                  id(previous_consumption_sensor).publish_state(id(previous_consumption));
-                  id(flow_rate_current_sensor).publish_state(id(flow_rate_current));
-                  id(flow_rate_last_sensor).publish_state(id(flow_rate_last));
+                  // Force sensor refresh
+                  id(current_consumption_sensor)
+                      .publish_state(id(current_consumption));
 
+                  id(previous_consumption_sensor)
+                      .publish_state(id(previous_consumption));
+
+                  id(flow_rate_current_sensor)
+                      .publish_state(id(flow_rate_current));
+
+                  id(flow_rate_last_sensor)
+                      .publish_state(id(flow_rate_last));
                 }
 
 # Toggle switch
@@ -145,13 +96,6 @@ switch:
       - switch.turn_on: fastupdate
     turn_off_action:
       - switch.turn_off: fastupdate
-
-  - platform: template
-    optimistic: true
-    id: spindel_normal
-    name: "Spindel 180=on 120=off"
-    icon: "mdi:rotate-3d-variant"
-    restore_mode: RESTORE_DEFAULT_ON
 
   # for manual calibration or auto
   - platform: template
@@ -188,13 +132,6 @@ button:
           id(max_a)= 0;
           id(max_b)= 0;
           id(max_c)= 0;
-
-text_sensor:
-  - platform: template
-    name: "debug_JSON"
-    id: debug_json
-    # No automatic interval, we'll update manually
-    update_interval: never
 
 output:
   - platform: gpio
@@ -501,6 +438,32 @@ sensor:
       int b = id(light_sensor_b_light).state - id(light_sensor_b_dark).state;
       int c = id(light_sensor_c_light).state - id(light_sensor_c_dark).state;
 
+      if (first){
+
+          id(a_history)[0] = a;
+          id(a_history)[1] = a;
+          id(a_history)[2] = a;
+
+          id(b_history)[0] = b;
+          id(b_history)[1] = b;
+          id(b_history)[2] = b;
+
+          id(c_history)[0] = c;
+          id(c_history)[1] = c;
+          id(c_history)[2] = c;
+
+          id(min_a)= a;
+          id(min_b)= b;
+          id(min_c)= c;
+
+          id(max_a)= a;
+          id(max_b)= b;
+          id(max_c)= c;
+
+          first = false;
+          return 0;
+      }
+      
       // Update history buffers
       id(a_history)[id(history_index)] = a;
       id(b_history)[id(history_index)] = b;
@@ -518,7 +481,11 @@ sensor:
       id(aa) = id(smoothed_a);
       id(bb) = id(smoothed_b);
       id(cc) = id(smoothed_c);
-      
+
+      a = id(smoothed_a);
+      b = id(smoothed_b);
+      c = id(smoothed_c);
+
       int max = id(upper_bound);
       int min = id(lower_bound);
 
@@ -530,16 +497,7 @@ sensor:
         ESP_LOGW("light_level", "Too bright, ignoring this measurement");
         return 0;
       }
-      if (first){
-        id(min_a)= a;
-        id(min_b)= b;
-        id(min_c)= c;
-        id(max_a)= 0;
-        id(max_b)= 0;
-        id(max_c)= 0;
-        first = false;
-        return 0;
-      }
+
 
 
       float alpha_cor = 0.001;
@@ -614,6 +572,12 @@ sensor:
               pn[2] = a + b - c - c; // same
       pn[3] = pn[0], pn[4] = pn[1];
       
+      if (id(phase) < 0)
+          id(phase) = 0;
+
+      if (id(phase) > 5)
+          id(phase) = 5;
+
       short i = id(phase) > 2 ? id(phase) - 3 : id(phase);
       if (pn[i + 2] < pn[i + 1] && pn[i + 2] < pn[i]){
           uint32_t current_time = millis();
@@ -627,6 +591,8 @@ sensor:
               // Each phase = 1/6 liter, time_diff in ms
               float liters_per_phase = 1.0 / 6.0;
               float flow_rate = (liters_per_phase * 60000.0) / float(time_diff); // L/min
+              if (flow_rate > 50.0f)
+                  flow_rate = 50.0f;
               
               // Smooth the flow rate with exponential moving average
               if (id(flow_rate_current) == 0.0) {
