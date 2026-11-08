@@ -101,14 +101,30 @@ button:
           if (b < min) b = id(light_sensor_b_light).state;
           int c = id(light_sensor_c_light).state - id(light_sensor_c_dark).state;
           if (c < min) c = id(light_sensor_c_light).state;
-
+          ESP_LOGI(
+              "calibration",
+              "Calibration reset requested. New baseline: A=%d B=%d C=%d, liters reset to 0",
+              a,
+              b,
+              c
+          );
           id(liters) = 0;
+          id(flow_rate_current) = 0.0;
+          id(flow_rate_last) = 0.0;
+
+          id(current_consumption) = 0.0;
+          id(previous_consumption) = 0.0;
+
+          id(consumption_start_time) = 0;
+          id(consumption_start_liters) = 0;
+          
           id(min_a)= a;
           id(min_b)= b;
           id(min_c)= c;
           id(max_a)= a;
           id(max_b)= b;
           id(max_c)= c;
+          ESP_LOGI( "calibration", "Calibration reset. All consumption and flow statistics cleared.");
 
 output:
   - platform: gpio
