@@ -340,9 +340,6 @@ sensor:
     accuracy_decimals: 3
     state_class: total_increasing
     lambda: |-
-      if (id(liters) < 2){
-        return 0;
-      }    
       return id(last_reported_liters__mili)/1000.0;
 
   - platform: template
@@ -355,9 +352,6 @@ sensor:
     accuracy_decimals: 0 
     state_class: total_increasing
     lambda: |-
-      if (id(last_reported_liters) < 2){
-        return 0;
-      }  
       return id(last_reported_liters);
 
   # Flow rate sensors
@@ -657,7 +651,7 @@ sensor:
             id(flow_rate_current) > 0.0) {
           ESP_LOGI(
               "flow",
-              "No flow detected for 5s. Resetting consumption %.1f L and flow rate %.2f L/min",
+              "No flow detected for 15s. Resetting consumption %.1f L and flow rate %.2f L/min",
               id(current_consumption),
               id(flow_rate_current)
           );
