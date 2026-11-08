@@ -1,4 +1,4 @@
-# WILLIAM_TEST_v1.2
+# WILLIAM_TEST_v1.3
 
 # These substitutions allow the end user to override certain values
 substitutions:
@@ -578,9 +578,10 @@ sensor:
             if (time_diff > 0) {
               // Flow rate based on phase changes (6 phases = 1 liter)
               // Each phase = 1/6 liter, time_diff in ms
+              //float liters_per_phase = 1.0 / 6.0; float flow_rate = (liters_per_phase * 60000.0) / float(time_diff);
+
               float flow_rate = 10000.0f / float(time_diff); // L/min
-              if (flow_rate > 50.0f)
-                  flow_rate = 50.0f;
+              if (flow_rate > 50.0f) flow_rate = 50.0f;
               
               // Smooth the flow rate with exponential moving average
               if (id(flow_rate_current) == 0.0) {
