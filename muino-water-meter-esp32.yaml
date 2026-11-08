@@ -675,18 +675,28 @@ sensor:
       }
       
       if (id(phase) == 6) {
-            ESP_LOGW(
-                "phase_wrap",
-                "Ignoring wrap phase=6"
-            );
-
-            id(phase) = 5;
+          id(liters)++;
+          id(phase) = 0;
+          
+          // Auto-start consumption tracking on first flow
+          if (id(consumption_start_time) == 0) {
+            id(consumption_start_time) = millis();
+            id(consumption_start_liters) = id(liters) - 1;
+          }
+          id(current_consumption) = float(id(liters) - id(consumption_start_liters));
       }
       else if (id(phase) == -1) {
-            ESP_LOGW("REVERSE", "\033[31mphase=-1 detected\033[0m");
-            id(phase) = 0;
+          id(liters)--;
+          id(phase) = 5;
+          
+          // Handle reverse flow
+          if (id(consumption_start_time) == 0) {
+            id(consumption_start_time) = millis();
+            id(consumption_start_liters) = id(liters) + 1;
+          }
+          id(current_consumption) = float(id(liters) - id(consumption_start_liters));
       }
-
+          
       return id(liters);
 
 
