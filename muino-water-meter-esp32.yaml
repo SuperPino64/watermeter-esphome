@@ -566,6 +566,7 @@ sensor:
       pn[4] = pn[1];
       
       short i = (current_phase > 2) ? current_phase - 3 : current_phase;
+      int phase_before = current_phase;
       
       if (pn[i + 2] < pn[i + 1] && pn[i + 2] < pn[i]){
           uint32_t current_time = millis();
@@ -597,6 +598,27 @@ sensor:
               id(phase)++;
           else
               id(phase)--;
+              
+          int phase_after = id(phase);
+
+          // Verwachte volgende fase
+          int expected_forward = (phase_before + 1) % 6;
+          int expected_backward = (phase_before + 5) % 6;
+
+          bool valid =
+                phase_after == expected_forward
+             || phase_after == expected_backward
+             || phase_after == 6
+             || phase_after == -1;
+
+          if (!valid) {
+              ESP_LOGW(
+                  "phase_check",
+                  "Unexpected phase jump %d -> %d",
+                  phase_before,
+                  phase_after);
+          }
+          ESP_LOGI("phase_trace", "phase %d -> %d", phase_before, phase_after);
       }
       
       // Auto-reset consumption after 30 seconds of no flow
