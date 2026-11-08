@@ -650,7 +650,7 @@ sensor:
             if (id(current_consumption) > 0.0 ||
                 id(flow_rate_current) > 0.0) {
 
-                  ESP_LOGI("*** <Reset water flow counting> ***");
+                  ESP_LOGI("RESET_FLOW", "*** <RESET WATER FLOW counting> ***");
 
                   if (id(current_consumption) < 0.0) {
                         id(current_consumption) = 0.0;
