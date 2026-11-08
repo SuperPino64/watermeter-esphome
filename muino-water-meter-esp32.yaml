@@ -655,7 +655,7 @@ sensor:
                 id(flow_rate_current) > 0.0) {
 
                   ESP_LOGI(
-                      "timeout_debug",
+                      "***Reset flow***",
                       "phase=%d liters=%d current=%.1f previous=%.1f start_liters=%d",
                       id(phase),
                       id(liters),
