@@ -642,7 +642,7 @@ sensor:
                   phase_before,
                   phase_after);
           }
-          ESP_LOGI("phase_trace", "phase %d -> %d", phase_before, phase_after);
+          ESP_LOGI("phase_trace", "phase__________ %d --> %d", phase_before, phase_after);
       }
       
       // Auto-reset consumption after 15 seconds of no flow
