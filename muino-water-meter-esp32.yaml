@@ -651,8 +651,9 @@ sensor:
           ESP_LOGI("phase_trace", "phase %d -> %d", phase_before, phase_after);
       }
       
-      // Auto-reset consumption after 10 seconds of no flow
-      if ((millis() - id(last_water_flow)) >= 10000) {
+      // Auto-reset consumption after 5 seconds of no flow
+      if ((millis() - id(last_water_flow)) >= 50000) {
+        ESP_LOGI( "flow", "No flow detected for 5s. Resetting consumption %.1f L and flow rate %.2f L/min", id(current_consumption), id(flow_rate_current));
         if (id(current_consumption) > 0.0) { // Reset any consumption > 0
           // Store current consumption as previous before resetting
           id(previous_consumption) = id(current_consumption);
