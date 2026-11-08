@@ -59,11 +59,6 @@ interval:
 
                 id(last_reported_liters) = id(liters);
 
-                #id(current_consumption_sensor)->publish_state(id(current_consumption));
-                #id(previous_consumption_sensor)->publish_state(id(previous_consumption));
-                #id(flow_rate_current_sensor)->publish_state(id(flow_rate_current));
-                #id(flow_rate_last_sensor)->publish_state(id(flow_rate_last));
-
 # Toggle switch
 switch:
   - platform: template 
