@@ -590,7 +590,7 @@ sensor:
       
       short i = (current_phase > 2) ? current_phase - 3 : current_phase;
       int phase_before = current_phase;
-      ESP_LOGI( "phase_math", "phase=%d pn0=%d pn1=%d pn2=%d", current_phase, pn[0], pn[1], pn[2]);
+      //ESP_LOGI( "phase_math", "phase=%d pn0=%d pn1=%d pn2=%d", current_phase, pn[0], pn[1], pn[2]);
       if (pn[i + 2] < pn[i + 1] && pn[i + 2] < pn[i]){
           uint32_t current_time = millis();
           id(last_water_flow) = current_time;
