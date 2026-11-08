@@ -88,11 +88,7 @@ switch:
       - lambda: |-
           id(manual_calibration) = false;
 
-button:
-  - platform: restart
-    name: "ESP Restart"
-    icon: "mdi:restart"
-    
+button:    
   - platform: template
     name: "Reset Calibration"
     icon: "mdi:restart"
@@ -655,7 +651,7 @@ sensor:
                 id(flow_rate_current) > 0.0) {
 
                   ESP_LOGI(
-                      "***Reset flow***",
+                      "*** <Reset water flow counting> ***",
                       "phase=%d liters=%d current=%.1f previous=%.1f start_liters=%d",
                       id(phase),
                       id(liters),
@@ -687,11 +683,7 @@ sensor:
             id(phase) = 5;
       }
       else if (id(phase) == -1) {
-            ESP_LOGW(
-                "reverse_flow",
-                "phase=-1 detected"
-            );
-
+            ESP_LOGW("REVERSE", "\033[31mphase=-1 detected\033[0m"
             id(phase) = 0;
       }
 
