@@ -652,8 +652,9 @@ sensor:
           // Auto-start consumption tracking on first flow
           if (id(consumption_start_time) == 0) {
             id(consumption_start_time) = millis();
-            id(consumption_start_liters) = id(liters) - 1;
+            id(consumption_start_liters) = id(liters) - 1; //vreemd
           }
+          ESP_LOGI( "consumption", "liters=%d start=%d result=%.1f", id(liters), id(consumption_start_liters), float(id(liters) - id(consumption_start_liters)));
           id(current_consumption) = float(id(liters) - id(consumption_start_liters));
       }
       else if (id(phase) == -1) {
@@ -666,6 +667,7 @@ sensor:
             id(consumption_start_time) = millis();
             id(consumption_start_liters) = id(liters) + 1;
           }
+          ESP_LOGI( "consumption", "liters=%d start=%d result=%.1f", id(liters), id(consumption_start_liters), float(id(liters) - id(consumption_start_liters)));
           id(current_consumption) = float(id(liters) - id(consumption_start_liters));
       }
           
