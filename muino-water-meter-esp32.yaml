@@ -683,7 +683,7 @@ sensor:
             id(phase) = 5;
       }
       else if (id(phase) == -1) {
-            ESP_LOGW("REVERSE", "\033[31mphase=-1 detected\033[0m"
+            ESP_LOGW("REVERSE", "\033[31mphase=-1 detected\033[0m");
             id(phase) = 0;
       }
 
