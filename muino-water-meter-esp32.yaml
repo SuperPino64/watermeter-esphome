@@ -59,10 +59,10 @@ interval:
 
                 id(last_reported_liters) = id(liters);
 
-                id(current_consumption_sensor)->publish_state(id(current_consumption));
-                id(previous_consumption_sensor)->publish_state(id(previous_consumption));
-                id(flow_rate_current_sensor)->publish_state(id(flow_rate_current));
-                id(flow_rate_last_sensor)->publish_state(id(flow_rate_last));
+                #id(current_consumption_sensor)->publish_state(id(current_consumption));
+                #id(previous_consumption_sensor)->publish_state(id(previous_consumption));
+                #id(flow_rate_current_sensor)->publish_state(id(flow_rate_current));
+                #id(flow_rate_last_sensor)->publish_state(id(flow_rate_last));
 
 # Toggle switch
 switch:
@@ -426,6 +426,17 @@ sensor:
       int c = id(light_sensor_c_light).state - id(light_sensor_c_dark).state;
 
       if (first){
+          id(flow_rate_current) = 0.0;
+          id(flow_rate_last) = 0.0;
+
+          id(current_consumption) = 0.0;
+          id(previous_consumption) = 0.0;
+
+          id(consumption_start_time) = 0;
+          id(consumption_start_liters) = 0;
+
+          id(last_flow_time) = 0;
+          id(last_water_flow) = millis();
 
           id(a_history)[0] = a;
           id(a_history)[1] = a;
