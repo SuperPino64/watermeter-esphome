@@ -680,8 +680,8 @@ sensor:
       }
       else if (id(phase) == -1) {
           ESP_LOGI( "liter_counter", "****PHASE WRAP REVERSE****: phase=-1, liters %d -> %d", id(liters),id(liters) - 1);
-          id(liters)--;
-          id(phase) = 0;
+          #id(liters)--;
+          id(phase) = 5;
           
           // Handle reverse flow
           if (id(consumption_start_time) == 0) {
