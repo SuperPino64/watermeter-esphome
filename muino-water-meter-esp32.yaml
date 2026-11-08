@@ -5,6 +5,24 @@ substitutions:
   name: "muino-water-meter"
 
 esphome:
+  on_boot:
+    priority: 800
+    then:
+      - lambda: |-
+          id(flow_rate_current) = 0.0;
+          id(flow_rate_last) = 0.0;
+
+          id(current_consumption) = 0.0;
+          id(previous_consumption) = 0.0;
+
+          id(consumption_start_time) = 0;
+          id(consumption_start_liters) = 0;
+
+          id(last_flow_time) = 0;
+          id(last_water_flow) = millis();
+
+          ESP_LOGI("startup", "Consumption and flow reset");
+          
   name: "${name}"
   # Automatically add the mac address to the name
   # so you can use a single firmware for all devices
