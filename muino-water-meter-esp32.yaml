@@ -437,6 +437,7 @@ sensor:
       int c = id(light_sensor_c_light).state - id(light_sensor_c_dark).state;
 
       if (first){
+          ESP_LOGI( "startup", "FIRST RUN EXECUTED");
           id(flow_rate_current) = 0.0;
           id(flow_rate_last) = 0.0;
 
@@ -508,7 +509,7 @@ sensor:
       }
 
 
-
+      ESP_LOGD( "phase_loop", "phase_coarse active");
       float alpha_cor = 0.001;
       if (id(liters) < 2) {
           alpha_cor = 0.1; // when 2 liter not found correct harder
