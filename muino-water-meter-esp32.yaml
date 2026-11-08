@@ -323,6 +323,7 @@ sensor:
     name: "Muino Water Total (L)"
     id: report_liters_ml
     force_update: false
+    update_interval: 1s
     device_class: "water"
     unit_of_measurement: "L"
     accuracy_decimals: 3
@@ -337,6 +338,7 @@ sensor:
     name: "liters"
     id: report_liters_rounded
     force_update: false
+    update_interval: 1s
     device_class: "water"
     unit_of_measurement: "L"
     accuracy_decimals: 0 
@@ -352,6 +354,7 @@ sensor:
     name: "Flow Rate Current"
     id: flow_rate_current_sensor
     force_update: false
+    update_interval: 1s
     unit_of_measurement: "L/min"
     accuracy_decimals: 2
     state_class: measurement
@@ -362,6 +365,7 @@ sensor:
     name: "Flow Rate Last"
     id: flow_rate_last_sensor
     force_update: false
+    update_interval: 5s
     unit_of_measurement: "L/min"
     accuracy_decimals: 2
     state_class: measurement
@@ -373,6 +377,7 @@ sensor:
     name: "Current Consumption"
     id: current_consumption_sensor
     force_update: false
+    update_interval: 1s
     device_class: "water"
     unit_of_measurement: "L"
     accuracy_decimals: 1
@@ -383,6 +388,7 @@ sensor:
     name: "Previous Consumption"
     id: previous_consumption_sensor
     force_update: false
+    update_interval: 5s
     device_class: "water"
     unit_of_measurement: "L"
     accuracy_decimals: 1
@@ -396,13 +402,6 @@ sensor:
     internal: true
     on_value:
       then:
-        - component.update: report_liters_ml
-        - component.update: report_liters_rounded
-        - component.update: flow_rate_current_sensor
-        - component.update: flow_rate_last_sensor
-        - component.update: current_consumption_sensor
-        - component.update: previous_consumption_sensor
-
         - if:
             condition:
               lambda: |-
@@ -411,7 +410,13 @@ sensor:
               - component.update: as
               - component.update: bs
               - component.update: cs
-              - component.update: phase_sensor          
+              - component.update: phase_sensor
+              #- component.update: report_liters_ml
+              #- component.update: report_liters_rounded
+              #- component.update: flow_rate_current_sensor
+              #- component.update: flow_rate_last_sensor
+              #- component.update: current_consumption_sensor
+              #- component.update: previous_consumption_sensor
     lambda: |-
       static bool first = true;
 
