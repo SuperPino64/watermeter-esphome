@@ -406,12 +406,12 @@ sensor:
               - component.update: bs
               - component.update: cs
               - component.update: phase_sensor
-              #- component.update: report_liters_ml
-              #- component.update: report_liters_rounded
-              #- component.update: flow_rate_current_sensor
-              #- component.update: flow_rate_last_sensor
-              #- component.update: current_consumption_sensor
-              #- component.update: previous_consumption_sensor
+              - component.update: report_liters_ml
+              - component.update: report_liters_rounded
+              - component.update: flow_rate_current_sensor
+              - component.update: flow_rate_last_sensor
+              - component.update: current_consumption_sensor
+              - component.update: previous_consumption_sensor
     lambda: |-
       static bool first = true;
 
