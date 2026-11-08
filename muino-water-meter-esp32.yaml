@@ -679,28 +679,22 @@ sensor:
       }
       
       if (id(phase) == 6) {
-          ESP_LOGI( "liter_counter", "PHASE WRAP: phase=6, liters %d -> %d", id(liters), id(liters) + 1);
-          id(liters)++;
-          id(phase) = 0;
-          
-          // Auto-start consumption tracking on first flow
-          ESP_LOGI("consumption_debug","start_time=%lu start_liters=%d",id(consumption_start_time),id(consumption_start_liters));
-          if (id(consumption_start_time) == 0) {
-            id(consumption_start_time) = millis();
-            id(consumption_start_liters) = id(liters);// - 1; //vreemd
-          }
-          ESP_LOGI( "consumption", "liters=%d start=%d result=%.1f", id(liters), id(consumption_start_liters), float(id(liters) - id(consumption_start_liters)));
-          id(current_consumption) = float(id(liters) - id(consumption_start_liters));
-      }
-      else if (id(phase) == -1) {
             ESP_LOGW(
-                "***reverse_flow***",
-                "phase=-1 detected"
+                "phase_wrap",
+                "Ignoring wrap phase=6"
             );
 
             id(phase) = 5;
       }
-          
+      else if (id(phase) == -1) {
+            ESP_LOGW(
+                "reverse_flow",
+                "phase=-1 detected"
+            );
+
+            id(phase) = 0;
+      }
+
       return id(liters);
 
 
