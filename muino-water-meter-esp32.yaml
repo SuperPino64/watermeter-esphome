@@ -647,21 +647,31 @@ sensor:
       
       // Auto-reset consumption after 15 seconds of no flow
       if ((millis() - id(last_water_flow)) >= 15000) {
-        if (id(current_consumption) > 0.0 ||
-            id(flow_rate_current) > 0.0) {
-          ESP_LOGI(
-              "flow",
-              "No flow detected for 15s. Resetting consumption %.1f L and flow rate %.2f L/min",
-              id(current_consumption),
-              id(flow_rate_current)
-          );
-          id(previous_consumption) = id(current_consumption);
-          id(flow_rate_last) = id(flow_rate_current);
-          id(current_consumption) = 0.0;
-          id(consumption_start_time) = 0;
-          id(consumption_start_liters) = 0;
-          id(flow_rate_current) = 0.0;
-        }
+            if (id(current_consumption) > 0.0 ||
+                id(flow_rate_current) > 0.0) {
+
+                  ESP_LOGI(
+                      "timeout_debug",
+                      "phase=%d liters=%d current=%.1f previous=%.1f start_liters=%d",
+                      id(phase),
+                      id(liters),
+                      id(current_consumption),
+                      id(previous_consumption),
+                      id(consumption_start_liters)
+                  );
+
+                  if (id(current_consumption) < 0.0) {
+                        id(current_consumption) = 0.0;
+                  }
+
+                  id(previous_consumption) = id(current_consumption);
+                  id(flow_rate_last) = id(flow_rate_current);
+
+                  id(current_consumption) = 0.0;
+                  id(consumption_start_time) = 0;
+                  id(consumption_start_liters) = 0;
+                  id(flow_rate_current) = 0.0;
+            }
       }
       
       if (id(phase) == 6) {
