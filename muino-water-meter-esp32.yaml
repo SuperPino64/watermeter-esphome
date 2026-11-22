@@ -618,36 +618,17 @@ sensor:
           id(last_flow_time) = current_time;
           id(last_flow_liters) = id(liters);
           
-          int amplitude = abs(a);
-
-          if (abs(b) > amplitude)
-              amplitude = abs(b);
-
-          if (abs(c) > amplitude)
-              amplitude = abs(c);
-
           int next_phase;
 
           if (pn[i + 1] > pn[i]) {
               next_phase = current_phase + 1;
           } else {
-              next_phase = current_phase - 1;
-          }
 
-          /*
-           * Bescherm tegen valse terugloop:
-           * 0 -> -1 alleen toestaan als het fasesignaal sterk genoeg is.
-           */
-          if (current_phase == 0 &&
-              next_phase == -1 &&
-              amplitude < 150)
-          {
               ESP_LOGW(
                   "phase_guard",
-                  "Rejected weak reverse transition 0 -> -1 amp=%d",
-                  amplitude);
+                  "Ignoring reverse phase transition");
 
-              next_phase = 0;
+              next_phase = current_phase;
           }
 
           id(phase) = next_phase;
@@ -656,13 +637,12 @@ sensor:
 
           // Verwachte volgende fase
           int expected_forward = (phase_before + 1) % 6;
-          int expected_backward = (phase_before + 5) % 6;
-
+          //int expected_backward = (phase_before + 5) % 6;
+          
           bool valid =
                 phase_after == expected_forward
-             || phase_after == expected_backward
-             || phase_after == 6
-             || phase_after == -1;
+             || phase_after == current_phase
+             || phase_after == 6;
 
           if (!valid) {
               ESP_LOGW(
@@ -671,7 +651,7 @@ sensor:
                   phase_before,
                   phase_after);
           }
-          ESP_LOGI( "phase_trace", "%d -> %d | amp=%d | pn=[%d,%d,%d] | a=%d b=%d c=%d", phase_before, phase_after, amplitude, pn[0], pn[1], pn[2], a, b, c);
+                    ESP_LOGI( "phase_trace", "%d -> %d | pn=[%d,%d,%d] | a=%d b=%d c=%d", phase_before, phase_after, pn[0], pn[1], pn[2],a,b,c);
       }
       
       // Auto-reset consumption after 15 seconds of no flow
