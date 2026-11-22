@@ -618,10 +618,34 @@ sensor:
           id(last_flow_time) = current_time;
           id(last_flow_liters) = id(liters);
           
-          if (pn[i + 1] > pn[i])
-              id(phase)++;
-          else
-              id(phase)--;
+          int amplitude =
+              max(max(abs(a), abs(b)), abs(c));
+
+          int next_phase;
+
+          if (pn[i + 1] > pn[i]) {
+              next_phase = current_phase + 1;
+          } else {
+              next_phase = current_phase - 1;
+          }
+
+          /*
+           * Bescherm tegen valse terugloop:
+           * 0 -> -1 alleen toestaan als het fasesignaal sterk genoeg is.
+           */
+          if (current_phase == 0 &&
+              next_phase == -1 &&
+              amplitude < 150)
+          {
+              ESP_LOGW(
+                  "phase_guard",
+                  "Rejected weak reverse transition 0 -> -1 amp=%d",
+                  amplitude);
+
+              next_phase = 0;
+          }
+
+          id(phase) = next_phase;
               
           int phase_after = id(phase);
 
@@ -642,7 +666,7 @@ sensor:
                   phase_before,
                   phase_after);
           }
-          ESP_LOGI("phase_trace", "%d -> %d | pn=[%d,%d,%d] | a=%d b=%d c=%d", phase_before, phase_after, pn[0], pn[1], pn[2], a, b, c);
+          ESP_LOGI( "phase_trace", "%d -> %d | amp=%d | pn=[%d,%d,%d] | a=%d b=%d c=%d", phase_before, phase_after, amplitude, pn[0], pn[1], pn[2], a, b, c);
       }
       
       // Auto-reset consumption after 15 seconds of no flow
