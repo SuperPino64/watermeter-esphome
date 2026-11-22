@@ -618,8 +618,13 @@ sensor:
           id(last_flow_time) = current_time;
           id(last_flow_liters) = id(liters);
           
-          int amplitude =
-              max(max(abs(a), abs(b)), abs(c));
+          int amplitude = abs(a);
+
+          if (abs(b) > amplitude)
+              amplitude = abs(b);
+
+          if (abs(c) > amplitude)
+              amplitude = abs(c);
 
           int next_phase;
 
